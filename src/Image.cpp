@@ -36,7 +36,7 @@ namespace my
 		}
 	}
 
-	void Image::Write(const std::string& file_path)
+	void Image::Output(const std::string& file_path)
 	{
 		stbi_write_png(file_path.c_str(), m_width, m_height, m_channel, m_pixels, 0);
 	}
