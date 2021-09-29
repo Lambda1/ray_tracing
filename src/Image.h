@@ -34,6 +34,9 @@ namespace my
 			m_pixels[(y * m_width + x) * m_channel + 2] = b;
 		}
 
+		inline size_t GetWidth() const { return m_width; }
+		inline size_t GetHeight() const { return m_height; }
+
 	private:
 		unsigned char* m_pixels;
 		size_t m_width, m_height;

@@ -1,14 +1,18 @@
 #include "./Image.h"
 
-int main(int argc, char* argv[])
+void Program01()
 {
 	my::Image img{};
+	const size_t width = 512;
+	const size_t height = 512;
+	img.Init(width, height, 3);
 
-	img.Init(512, 512, 3);
+	img.Output("./output/program01.png");
+}
 
-	img.WritePixel(256, 256, 1.0f, 1.0f, 1.0f);
-
-	img.Output("./output/test.png");
+int main(int argc, char* argv[])
+{
+	Program01();
 
 	return 0;
 }
