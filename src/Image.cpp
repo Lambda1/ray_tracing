@@ -24,15 +24,13 @@ namespace my
 		const size_t img_size = m_width * m_height * m_channel;
 		m_pixels = new unsigned char[img_size];
 
-		int flag = 0;
-		const unsigned char on = 255;
 		const size_t real_img_size = m_width * m_height;
 		for (size_t i = 0; i < img_size; i += m_channel)
 		{
-			m_pixels[i + 0] = (flag % m_channel == 0) ? on : !on;
-			m_pixels[i + 1] = (flag % m_channel == 1) ? on : !on;
-			m_pixels[i + 2] = (flag % m_channel == 2) ? on : !on;
-			++flag;
+			m_pixels[i + 0] = 255;
+			m_pixels[i + 1] = 255;
+			m_pixels[i + 2] = 255;
+
 		}
 	}
 
