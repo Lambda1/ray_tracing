@@ -9,24 +9,26 @@ void HiddenSurfaceErasure()
 	const size_t height = 512;
 	img.Init(width, height, 3);
 
-	glm::vec3 eye{ 0.0f, 0.0f, 1.0f };
+	glm::vec3 eye{ 0.0f, 0.0f, 1.0f }; // 視線ベクトル
+	my::Ball ball{ 0.0f, 0.0f, 1.0f, 0.5f }; // 球
 
-	my::Ball ball{ 0.0f, 0.0f, 100.0f, 100.0f };
-
-	const int S = 199;
-	for (int i = S; i > -S; --i)
+	// スクリーンサイズ
+	const int s_h = height / 2; // [-1.0, 1.0]
+	const int s_w = width / 2;  // [-1.0, 1.0]
+	for (int i = -s_h; i < s_h; ++i)
 	{
-		for (int j = -S; j < S; ++j)
+		for (int j = -s_w; j < s_w; ++j)
 		{
-			const float val = ball.RayCast(glm::vec3{ j, i, 0 }, eye);
-			if (val >= 0)
+			const float x = j / static_cast<float>(s_w);
+			const float y = i / static_cast<float>(s_h);
+			if (ball.RayCast(glm::vec3{x, y, 0.0f}, eye) != 0.0f)
 			{
-				img.WritePixel(j + S, i + S, 1.0f, 0.0f, 0.0f);
+				img.WritePixel(j + s_w, i + s_h, 1.0f, 0.0f, 0.0f);
 			}
 		}
 	}
 
-	img.Output("./output/program01.png");
+	img.Output("./output/001_HiddenSurfaceErasure.png");
 }
 
 int main(int argc, char* argv[])

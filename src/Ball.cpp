@@ -1,5 +1,7 @@
 #include "Ball.h"
 
+#include <cmath>
+
 #include "../glm/glm/glm.hpp"
 
 namespace my
@@ -15,11 +17,11 @@ namespace my
 
 	float Ball::RayCast(const glm::vec3& vect, const glm::vec3& eye)
 	{
-		const float D = m_r * m_r - vect.x * vect.x - vect.y * vect.y;
+		const float d = std::sqrtf(m_r * m_r - vect.x * vect.x - vect.y * vect.y);
 
-		if (D > 0)
+		if (d >= 0)
 		{
-			return 1.0f;
+			return vect.z - d;
 		}
 
 		return 0.0f;
