@@ -17,11 +17,15 @@ namespace my
 
 	float Ball::RayCast(const glm::vec3& vect, const glm::vec3& eye) const
 	{
-		const float d = (m_r * m_r - vect.x * vect.x - vect.y * vect.y);
+		const float a = eye.x * eye.x + eye.y * eye.y + eye.z * eye.z;
+		const float b = 2.0f * (eye.x * (vect.x - m_center.x) + eye.y * (vect.y - m_center.y) + eye.z * (vect.z - m_center.z));
+		const float c = (vect.x - m_center.x) * (vect.x - m_center.x) + (vect.y - m_center.y) * (vect.y - m_center.y) + (vect.z - m_center.z) * (vect.z - m_center.z) - m_r * m_r;
+		
+		const float d = b * b - 4.0f * a * c;
 
 		if (d >= 0.0f)
 		{
-			return m_center.z - std::sqrtf(d);
+			return (-b - std::sqrtf(d))/2.0f;
 		}
 
 		return 1e5f;

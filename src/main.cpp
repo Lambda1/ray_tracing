@@ -84,22 +84,17 @@ void Shading(my::Image& img, const bool& ambient_flag)
 
 void Perspective(my::Image& img)
 {
-	const glm::vec3 eye{ 0.0f, 0.0f, 1.0f }; // 視線ベクトル
-
 	// 球定義
 	std::vector<my::Ball> balls;
 	// 球1
-	//balls.emplace_back(my::Ball{ 0.0f, 0.0f, 50.0f, 100.0f });
-	//balls[0].SetLuminance(glm::vec3{ 1.0f, 0.0f, 0.0f });
+	balls.emplace_back(my::Ball{ 0.0f, 0.0f, 100.0f, 100.0f });
+	balls[0].SetLuminance(glm::vec3{ 1.0f, 0.0f, 0.0f });
 	// 球2
-	balls.emplace_back(my::Ball{ 100.0f, 0.0f, 100.0f, 100.0f });
-	balls[0].SetLuminance(glm::vec3{ 0.0f, 1.0f, 0.0f });
+	balls.emplace_back(my::Ball{ 200.0f, 0.0f, 200.0f, 100.0f });
+	balls[1].SetLuminance(glm::vec3{ 0.0f, 1.0f, 0.0f });
 	// 球3
-	//balls.emplace_back(my::Ball{ -100.0f, 0.0f, 200.0f, 100.0f });
-	//balls[2].SetLuminance(glm::vec3{ 0.0f, 0.0f, 1.0f });
-	// 球4
-	//balls.emplace_back(my::Ball{ 50.0f, 50.0f, 50.0f, 100.0f });
-	//balls[3].SetLuminance(glm::vec3{ 0.3f, 0.4f, 0.5f });
+	balls.emplace_back(my::Ball{ -200.0f, 0.0f, 300.0f, 100.0f });
+	balls[2].SetLuminance(glm::vec3{ 0.0f, 0.0f, 1.0f });
 
 	// 光源定義
 	const glm::vec3 light{ -1.0f, 1.0f, -1.0f }; // 光源ベクトル
@@ -108,6 +103,9 @@ void Perspective(my::Image& img)
 
 	const glm::vec3 light_n = glm::normalize(light);
 
+	// 視点位置
+	const glm::vec3 eye_v = glm::vec3{0.0f, 0.0f, -300.0f};
+
 	// スクリーンサイズ
 	const int s_h_div2 = img.GetHeight() / 2;
 	const int s_w_div2 = img.GetWidth() / 2;
@@ -115,23 +113,27 @@ void Perspective(my::Image& img)
 	{
 		for (int j = -s_w_div2; j < s_w_div2; ++j)
 		{
-			const float x = j;
-			const float y = -i;
+			const glm::vec3 eye = glm::normalize(glm::vec3{ (j - eye_v.x), (i - eye_v.y), -eye_v.z }); // 視線ベクトル
 
+			// レイトレ
 			glm::vec3 i_d = { 0.0f, 0.0f, 0.0f };
 			float t = 1e5f;
 			for (auto ball : balls)
 			{
-				const float tmp_t = ball.RayCast(glm::vec3{ x, y, 0.0f }, eye);
+				// 当たり判定
+				const float tmp_t = ball.RayCast(eye_v, eye);
 				if (tmp_t == 1e5f) { continue; } // 解なし
 
 				// 現在の物体より手前に別の物体がある
-				if (tmp_t >= t) { continue; }
-
+				if (!(tmp_t < t)) { continue; }
 				t = tmp_t;
-				const glm::vec3 normal = glm::normalize(glm::vec3{ j, i, t - ball.GetCenter().z });
-				float ln = glm::dot(light_n, normal);
 
+				// 法線ベクトル
+				const glm::vec3 xyz = {eye * t + eye_v};
+				const glm::vec3 normal = glm::normalize(xyz - ball.GetCenter());
+
+				// シェーディング
+				float ln = glm::dot(light_n, normal);
 				if (ln < 0.0f)
 				{
 					ln = 0.0f;
