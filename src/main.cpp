@@ -1,3 +1,5 @@
+#include <vector>
+
 #include "./Image.h"
 #include "./Ball.h"
 
@@ -78,6 +80,51 @@ void Shading(my::Image& img, const bool& ambient_flag)
 		img.Output("./output/002_Shading.png");
 	else
 		img.Output("./output/003_Shading_ambient.png");
+}
+
+void Perspective(my::Image& img)
+{
+	const glm::vec3 eye{ 0.0f, 0.0f, 1.0f }; // 視線ベクトル
+
+	my::Ball ball{ 0.0f, 0.0f, 100.0f, 100.0f }; // 球
+	ball.SetLuminance(glm::vec3{ 1.0f, 0.f, 0.f });
+
+	const glm::vec3 light{ -1.0f, 1.0f, -1.0f }; // 光源ベクトル
+	const glm::vec3 i_p{ 1.0f, 1.0f, 1.0f }; // 光源強度(白色)
+
+	const glm::vec3 light_n = glm::normalize(light);
+
+	glm::vec3 i_a = glm::vec3{ 0.2f, 0.2f, 0.2f }; // 環境光
+
+	// スクリーンサイズ
+	const int s_h_div2 = img.GetHeight() / 2;
+	const int s_w_div2 = img.GetWidth() / 2;
+	for (int i = -s_h_div2; i < s_h_div2; ++i)
+	{
+		for (int j = -s_w_div2; j < s_w_div2; ++j)
+		{
+			const float x = j;
+			const float y = -i;
+
+			const float t = ball.RayCast(glm::vec3{ x, y, 0.0f }, eye);
+			if (t == 1e5f) { continue; } // 解なし
+
+			const glm::vec3 normal = glm::normalize(glm::vec3{ j, i, t - ball.GetCenter().z });
+			float ln = glm::dot(light_n, normal);
+			glm::vec3 i_d = { 0.0f, 0.0f, 0.0f };
+
+			// ln <  0.0f: 面の裏から光線 (影)
+			// ln >= 0.0f: 面の表から光線 (反射)
+			if (ln < 0.0f)
+			{
+				ln = 0.0f;
+			}
+			i_d = ball.GetLuminance() * ((i_p * ln) + i_a);
+
+			img.WritePixel(j + s_w_div2, -i + s_h_div2, i_d.r, i_d.g, i_d.b);
+		}
+	}
+	img.Output("./output/004_Perspective.png");
 }
 
 int main(int argc, char* argv[])

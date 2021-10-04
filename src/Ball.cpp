@@ -7,8 +7,7 @@
 namespace my
 {
 	Ball::Ball(const float& x, const float& y, const float& z, const float& r) :
-		m_center{ x, y, z }, m_r{ r },
-		m_k_d{0.0f, 0.0f, 0.0f}
+		m_center{ x, y, z }, m_r{ r }
 	{
 	}
 
