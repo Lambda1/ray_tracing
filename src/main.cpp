@@ -160,17 +160,17 @@ void Shadow(my::Image& img)
 	// 図形定義
 	std::vector<my::Shape*> shapes;
 	// 球1
-	shapes.emplace_back(new my::Ball{ 0.0f, 0.0f, 100.0f, 100.0f });
+	shapes.emplace_back(new my::Ball{ 0.0f, 0.0f, 0.0f, 100.0f });
 	shapes[0]->SetLuminance(glm::vec3{ 1.0f, 0.0f, 0.0f });
 	// 球2
-	shapes.emplace_back(new my::Ball{ 200.0f, 0.0f, 200.0f, 100.0f });
+	shapes.emplace_back(new my::Ball{ 200.0f, 0.0f, 100.0f, 100.0f });
 	shapes[1]->SetLuminance(glm::vec3{ 0.0f, 1.0f, 0.0f });
 	// 球3
-	shapes.emplace_back(new my::Ball{ -200.0f, 0.0f, 300.0f, 100.0f });
+	shapes.emplace_back(new my::Ball{ -200.0f, 0.0f, 200.0f, 100.0f });
 	shapes[2]->SetLuminance(glm::vec3{ 0.0f, 0.0f, 1.0f });
 	// 床
 	shapes.emplace_back(new my::Plane{ 0.0f, -100.0f, 0.0f });
-	shapes[3]->SetLuminance(glm::vec3{ 0.5f, 0.5f, 0.5f });
+	shapes[3]->SetLuminance(glm::vec3{ 0.0f, 0.5f, 0.5f });
 
 	// 光源定義
 	const glm::vec3 light{ 0.0f, 200.0f, -200.0f }; // 光源ベクトル
@@ -200,7 +200,7 @@ void Shadow(my::Image& img)
 				if (tmp_t == 1e5f) { continue; } // 解なし
 
 				// 現在の物体より手前に別の物体がある
-				if (!(tmp_t < t)) { continue; }
+				if (!(tmp_t < t || tmp_t < 0)) { continue; }
 				t = tmp_t;
 
 				shape_tmp = shape;
@@ -224,8 +224,8 @@ void Shadow(my::Image& img)
 				{
 					const glm::vec3 w = (xyz - shapes[i]->GetCenter());
 					// 判別式
-					const float b = 2.0f * glm::dot(light, w);
-					const float c = std::sqrtf(w.length()) - shapes[i]->GetR() * shapes[i]->GetR();
+					const float b = 2.0f * glm::dot(light_n, w);
+					const float c = std::sqrtf(glm::dot(w, w)) - shapes[i]->GetR() * shapes[i]->GetR();
 					const float d = b * b - 4.0f * c;
 					if (d >= 0)
 					{
