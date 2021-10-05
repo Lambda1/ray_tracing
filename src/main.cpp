@@ -173,11 +173,9 @@ void Shadow(my::Image& img)
 	shapes[3]->SetLuminance(glm::vec3{ 0.5f, 0.5f, 0.5f });
 
 	// 光源定義
-	const glm::vec3 light{ -1.0f, 1.0f, -1.0f }; // 光源ベクトル
+	const glm::vec3 light{ 0.0f, 200.0f, -200.0f }; // 光源ベクトル
 	const glm::vec3 i_p{ 1.0f, 1.0f, 1.0f }; // 光源強度(白色)
 	glm::vec3 i_a = glm::vec3{ 0.2f, 0.2f, 0.2f }; // 環境光
-
-	const glm::vec3 light_n = glm::normalize(light);
 
 	// 視点位置
 	const glm::vec3 eye_v = glm::vec3{ 0.0f, 0.0f, -300.0f };
@@ -194,6 +192,7 @@ void Shadow(my::Image& img)
 			// レイトレ
 			glm::vec3 i_d = { 0.0f, 0.0f, 0.0f };
 			float t = 1e5f;
+			my::Shape *shape_tmp;
 			for (const auto& shape : shapes)
 			{
 				// 当たり判定
@@ -204,22 +203,45 @@ void Shadow(my::Image& img)
 				if (!(tmp_t < t)) { continue; }
 				t = tmp_t;
 
+				shape_tmp = shape;
+			}
+
+			if (t < 1e5f)
+			{
 				// 法線ベクトル
-				const glm::vec3 normal = shape->Normal(eye, eye_v, t);
+				const glm::vec3 normal = shape_tmp->Normal(eye, eye_v, t);
 				// (床面と平行)
 				if (normal == glm::vec3{1e5f, 1e5f, 1e5f}) { continue; }
 
 				// シェーディング
+				const glm::vec3 xyz = {eye * t + eye_v};
+				const glm::vec3 light_n = glm::normalize(light - xyz);
 				float ln = glm::dot(light_n, normal);
-				if (ln < 0.0f)
+				if (ln < 0.0f) { ln = 0.0f; }
+				// 影の計算(球体のみ)
+				float sc = 1;
+				for (int i = 0; i < shapes.size() - 1; ++i)
 				{
-					ln = 0.0f;
+					const glm::vec3 w = (xyz - shapes[i]->GetCenter());
+					// 判別式
+					const float b = 2.0f * glm::dot(light, w);
+					const float c = std::sqrtf(w.length()) - shapes[i]->GetR() * shapes[i]->GetR();
+					const float d = b * b - 4.0f * c;
+					if (d >= 0)
+					{
+						const float t = (-b - std::sqrtf(d)) / 2.0f;
+						if (t > 0)
+						{
+							sc = 0;
+							break;
+						}
+					}
 				}
-				i_d = shape->GetLuminance() * ((i_p * ln) + i_a);
-			}
-
-			if (t < 1e5f)
+				
+				i_d = shape_tmp->GetLuminance() * ((i_p * sc * ln) + i_a);
+				
 				img.WritePixel(j + s_w_div2, -i + s_h_div2, i_d.r, i_d.g, i_d.b);
+			}
 		}
 	}
 
@@ -228,7 +250,7 @@ void Shadow(my::Image& img)
 		delete ptr;
 	}
 
-	img.Output("./output/006_Plane.png");
+	img.Output("./output/007_Shadow.png");
 }
 
 int main(int argc, char* argv[])
