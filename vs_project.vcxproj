@@ -144,10 +144,13 @@
     <ClCompile Include="src\Ball.cpp" />
     <ClCompile Include="src\Image.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Plane.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Ball.h" />
     <ClInclude Include="src\Image.h" />
+    <ClInclude Include="src\Plane.h" />
+    <ClInclude Include="src\Shape.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

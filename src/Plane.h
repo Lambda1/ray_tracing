@@ -1,19 +1,18 @@
-#ifndef MY_BALL_H
-#define MY_BALL_H
+#ifndef MY_PLANE_H
+#define MY_PLANE_H
 
 #include "./Shape.h"
 
 namespace my
 {
-	class Ball : public Shape
+	class Plane : public Shape
 	{
 	public:
-		explicit Ball(const float &x, const float &y, const float &z, const float &r);
-		virtual ~Ball();
-
+		explicit Plane(const float &x, const float &y, const float &z);
+		~Plane();
+		
 		virtual float RayCast(const glm::vec3& vect, const glm::vec3& eye) const override;
 		virtual glm::vec3 Normal(const glm::vec3 &eye, const glm::vec3& eye_v, const float &t) const override;
-	private:
 	};
 }
 
