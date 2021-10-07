@@ -27,8 +27,8 @@ namespace my
 		// rgb = [0, 255]
 		inline void WritePixelValue(const int& x, const int& y, const unsigned char& r, const unsigned char& g, const unsigned char& b)
 		{
-			const int idx = y * m_width + x * m_channel;
-			assert(!(idx + 2 >= max_size));
+			const int idx = (y * m_width + x) * m_channel;
+			assert((idx >= 0) || (idx + 2 < max_size));
 
 			m_pixels[idx + 0] = r;
 			m_pixels[idx + 1] = g;
