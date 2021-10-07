@@ -14,6 +14,7 @@ int main(int argc, char* argv[])
 	std::vector<my::Shape*> shapes;
 	shapes.emplace_back(new my::Ball{0.0f, 0.0f, 100.0f, 100.0f});
 
+	// •`‰æ—Ìˆæ’è‹`
 	my::Image img{screen_width, screen_height, 3};
 	
 	// ƒŒƒ“ƒ_ƒŠƒ“ƒO
@@ -30,7 +31,7 @@ int main(int argc, char* argv[])
 			img.WritePixel(j, i, 0.0f, 0.0f, 0.0f);
 		}
 	}
-	img.Output("./output/test.png");
+	img.Output("./output/render.png");
 	
 	// ‰ð•ú
 	for (auto shape : shapes)
