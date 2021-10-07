@@ -5,33 +5,28 @@
 
 namespace my
 {
-	Image::Image() :
+	Image::Image(const int& width, const int& height, const int& channel) :
 		m_pixels{ nullptr },
-		m_width{ 0 }, m_height{ 0 }, m_channel{ 0 }
+		m_width{ width }, m_height{ height }, m_channel{ channel },
+		max_size{ 0 }
 	{
+		Init_();
 	}
 	Image::~Image()
 	{
 		delete[] m_pixels;
 		m_pixels = nullptr;
 	}
-	void Image::Init(const size_t& width, const size_t& height, const size_t& channel)
+	void Image::Init_()
 	{
-		m_width = width;
-		m_height = height;
-		m_channel = channel;
+		const int img_size = m_width * m_height * m_channel;
+		max_size = img_size;
 
-		const size_t img_size = m_width * m_height * m_channel;
 		m_pixels = new unsigned char[img_size];
 
-		const size_t real_img_size = m_width * m_height;
-		for (size_t i = 0; i < img_size; i += m_channel)
-		{
-			m_pixels[i + 0] = 255;
-			m_pixels[i + 1] = 255;
-			m_pixels[i + 2] = 255;
-
-		}
+		// ”’‚Å‰Šú‰»
+		const int real_img_size = m_width * m_height * m_channel;
+		for (int i = 0; i < img_size; ++i) { m_pixels[i] = 255; }
 	}
 
 	void Image::Output(const std::string& file_path)

@@ -3,16 +3,16 @@
 
 #include <algorithm>
 #include <string>
+#include <cassert>
 
 namespace my
 {
 	class Image final
 	{
 	public:
-		Image();
+		explicit Image(const int& width, const int& height, const int& channel);
 		~Image();
 
-		void Init(const size_t& width, const size_t& height, const size_t& channel);
 		void Output(const std::string &file_path);
 
 		// rgb = [0.0f, 1.0f]
@@ -22,25 +22,30 @@ namespace my
 			unsigned char gg = static_cast<unsigned char>(std::clamp(g * 255.0f, 0.0f, 255.0f));
 			unsigned char bb = static_cast<unsigned char>(std::clamp(b * 255.0f, 0.0f, 255.0f));
 
-			m_pixels[(y * m_width + x) * m_channel + 0] = rr;
-			m_pixels[(y * m_width + x) * m_channel + 1] = gg;
-			m_pixels[(y * m_width + x) * m_channel + 2] = bb;
+			WritePixelValue(x, y, rr, gg, bb);
 		}
 		// rgb = [0, 255]
 		inline void WritePixelValue(const int& x, const int& y, const unsigned char& r, const unsigned char& g, const unsigned char& b)
 		{
-			m_pixels[(y * m_width + x) * m_channel + 0] = r;
-			m_pixels[(y * m_width + x) * m_channel + 1] = g;
-			m_pixels[(y * m_width + x) * m_channel + 2] = b;
+			const int idx = y * m_width + x * m_channel;
+			assert(!(idx + 2 >= max_size));
+
+			m_pixels[idx + 0] = r;
+			m_pixels[idx + 1] = g;
+			m_pixels[idx + 2] = b;
 		}
 
-		inline size_t GetWidth() const { return m_width; }
-		inline size_t GetHeight() const { return m_height; }
+		inline int GetWidth() const { return m_width; }
+		inline int GetHeight() const { return m_height; }
+		
+	private:
+		void Init_();
 
 	private:
 		unsigned char* m_pixels;
-		size_t m_width, m_height;
-		size_t m_channel;
+		const int m_width, m_height;
+		const int m_channel;
+		int max_size;
 	};
 }
 
