@@ -3,6 +3,8 @@
 
 #include "./Shape.h"
 
+#include "../glm/glm/glm.hpp"
+
 namespace my
 {
 	class Ball : public Shape
@@ -11,9 +13,9 @@ namespace my
 		explicit Ball(const float &x, const float &y, const float &z, const float &r);
 		virtual ~Ball();
 
-		virtual float RayCast(const glm::vec3& vect, const glm::vec3& eye) const override;
-		virtual glm::vec3 Normal(const glm::vec3 &eye, const glm::vec3& eye_v, const float &t) const override;
 	private:
+		glm::vec3 m_center;
+		float m_radius;
 	};
 }
 

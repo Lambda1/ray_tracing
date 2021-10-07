@@ -3,6 +3,8 @@
 
 #include "./Shape.h"
 
+#include "../glm/glm/glm.hpp"
+
 namespace my
 {
 	class Plane : public Shape
@@ -10,9 +12,8 @@ namespace my
 	public:
 		explicit Plane(const float &x, const float &y, const float &z);
 		~Plane();
-		
-		virtual float RayCast(const glm::vec3& vect, const glm::vec3& eye) const override;
-		virtual glm::vec3 Normal(const glm::vec3 &eye, const glm::vec3& eye_v, const float &t) const override;
+	private:
+		glm::vec3 m_center;
 	};
 }
 
